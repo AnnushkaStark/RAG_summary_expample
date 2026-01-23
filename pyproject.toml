@@ -1,0 +1,54 @@
+[project]
+name = "RAG_summary_example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.2"
+dependencies = [
+    "alembic>=1.18.1",
+    "alembic-postgresql-enum>=1.8.0",
+    "asyncpg>=0.31.0",
+    "fastapi>=0.128.0",
+    "minio>=7.2.20",
+    "pgvector>=0.4.2",
+    "psycopg-binary>=3.3.2",
+    "pydantic-settings>=2.12.0",
+    "python-multipart>=0.0.21",
+    "ruff>=0.14.13",
+    "sqlalchemy>=2.0.46",
+    "uvicorn>=0.40.0",
+]
+
+[tool.ruff]
+line-length = 79
+target-version = "py312"
+extend-include = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM"
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ty]
+
+[tool.ty.src]
+include = ["src"]
+
+[tool.ty.terminal]
+error-on-warning = true
+output-format = "concise"
+
+[tool.ty.environment]
+python-version = "3.12"
