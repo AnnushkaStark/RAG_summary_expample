@@ -13,6 +13,10 @@ class ErrorText(enum.Enum):
     ERROR_SAVE_FILE = "Error save file"
     BUCKET_POLICY_ERROR = "Bucket policy error"
     INVALID_FILENAME = "Invalid filename"
+    FILE_IS_EMPTY = "File is empty"
+    MAXIMUM_FILE_SIZE_EXCEEDED = "Maximum file size exceeded"
+    FILE_ALREDY_EXSISTS = "File alredy exsists"
+    ERROR_REMOVE_FILE = "Error remove file"
 
 
 class DomainError(Exception):
@@ -27,6 +31,10 @@ ERROR_STATUS_MAP = {
     ErrorText.ERROR_SAVE_FILE: 400,
     ErrorText.BUCKET_POLICY_ERROR: 400,
     ErrorText.INVALID_FILENAME: 400,
+    ErrorText.FILE_ALREDY_EXSISTS: 400,
+    ErrorText.FILE_IS_EMPTY: 422,
+    ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED: 422,
+    ErrorText.ERROR_REMOVE_FILE: 400,
 }
 
 

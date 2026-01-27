@@ -1,4 +1,3 @@
-import enum
 from datetime import datetime
 
 from pgvector.sqlalchemy import Vector
@@ -13,6 +12,7 @@ from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
+from constants.doc_status import DocumentStatus
 from databases.database import Base
 
 
@@ -30,13 +30,6 @@ class Document(Base):
       - status: DocumentStaus - статус обработки
       - uploaded_at: datetime - дата и время загрузки
     """
-
-    class DocumentStatus(enum.Enum):
-        CREATED = "Created"
-        CHUNKED = "Chunked"
-        PROCESSED = "Processed"
-        SUCCESS = "Sucess"
-        FAILED = "Failed"
 
     __tablename__ = "document"
     __table_args__ = (
@@ -66,8 +59,9 @@ class Document(Base):
     )
     summary_embedding: Mapped[Vector] = mapped_column(Vector, nullable=True)
     status: Mapped[ENUM] = mapped_column(
-        ENUM(DocumentStatus, create_type=False)
+        ENUM(DocumentStatus, create_type=False), default=DocumentStatus.CREATED
     )
     uploaded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+    doc_hash: Mapped[str]

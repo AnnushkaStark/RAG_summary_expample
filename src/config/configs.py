@@ -21,5 +21,15 @@ class MinioSettings(BaseSetting):
     MINIO_SERVER_URL: str
 
 
+class FileSettings(BaseSetting):
+    MAX_SIZE: int = 10 * 1024 * 1024
+
+
+class KafkaSettings(BaseSetting):
+    BOOTSTRAP_URL: str = "kafka:29092"
+
+
+kafka_settings = KafkaSettings()
 db_settings = DBSettings()
 minio_settings = MinioSettings()
+file_settings = FileSettings()

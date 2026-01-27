@@ -105,3 +105,13 @@ class MinioStorage:
             content=response.read(),
             media_type=content_type,
         )
+
+    async def remove_file(self, file_url: str) -> str:
+        file_url = file_url.split("/")
+        try:
+            self.client.remove_object(
+                bucket_name=file_url[-2], object_name=file_url[-1]
+            )
+        except S3Error as err:
+            raise DomainError(ErrorText.ERROR_REMOVE_FILE) from err
+        return "Ok"
