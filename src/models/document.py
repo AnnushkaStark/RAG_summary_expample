@@ -43,7 +43,7 @@ class Document(Base):
             "summary_embedding",
             postgresql_using="hnsw",
             postgresql_with={"m": 16, "ef_construction": 64},
-            postgresql_ops={"embedding": "vector_cosine_ops"},
+            postgresql_ops={"summary_embedding": "vector_cosine_ops"},
         ),
     )
 
@@ -55,7 +55,7 @@ class Document(Base):
     full_summary: Mapped[str] = mapped_column(Text, nullable=True)
     full_text_search: Mapped[TSVECTOR] = mapped_column(
         TSVECTOR,
-        Computed("to_tsvector('russian', chunk_text)", persisted=True),
+        Computed("to_tsvector('russian', full_summary)", persisted=True),
     )
     summary_embedding: Mapped[Vector] = mapped_column(Vector, nullable=True)
     status: Mapped[ENUM] = mapped_column(

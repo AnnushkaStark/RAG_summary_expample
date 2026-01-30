@@ -26,7 +26,7 @@ class Chunk(Base):
       - document_id: int - идентификатор докумнета (FK Document)
     """
 
-    __tablename__ = "document"
+    __tablename__ = "chunk"
     __table_args__ = (
         Index(
             "ix_doc_chunks_search_vector",
@@ -38,7 +38,7 @@ class Chunk(Base):
             "summary_embedding",
             postgresql_using="hnsw",
             postgresql_with={"m": 16, "ef_construction": 64},
-            postgresql_ops={"embedding": "vector_cosine_ops"},
+            postgresql_ops={"summary_embedding": "vector_cosine_ops"},
         ),
     )
 

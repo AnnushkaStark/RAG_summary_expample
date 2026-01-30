@@ -72,5 +72,6 @@ class DocumentService:
         return document.doc_url
 
     async def remove(self, doc_url: str) -> None:
+        logger.info("Удаление файла")
         await self.repository.remove_doc_by_ulr(doc_url=doc_url)
         await self.storage.remove_file(file_url=doc_url)

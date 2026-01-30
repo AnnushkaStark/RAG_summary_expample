@@ -12,7 +12,6 @@ logger = logging.getLogger("ProducerService")
 class ProducerService:
     def __init__(self):
         self.bootstrap_url = kafka_settings.BOOTSTRAP_URL
-        self.topic = kafka_settings.TOPIC
         self.producer = None
         self.chunk_topic = "chunk_topic"
         self.summarize_topic = "summarize_topic"
