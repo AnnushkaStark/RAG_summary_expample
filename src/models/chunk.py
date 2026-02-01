@@ -50,6 +50,7 @@ class Chunk(Base):
     full_text_search: Mapped[TSVECTOR] = mapped_column(
         TSVECTOR,
         Computed("to_tsvector('russian', text)", persisted=True),
+        nullable=True,
     )
     number: Mapped[int]
     summary_embedding: Mapped[Vector] = mapped_column(Vector, nullable=True)

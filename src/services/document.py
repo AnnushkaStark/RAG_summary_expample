@@ -29,13 +29,14 @@ class DocumentService:
         self.storage = storage
         self.producer = producer
 
-    def _get_file_hash(self, file: Annotated[UploadFile, File()]) -> str:
+    async def _get_file_hash(self, file: Annotated[UploadFile, File()]) -> str:
         logger.info("Генерация уникального хэша содержимого файла")
-        hash = hashlib.sha256(file.read()).hexdigest()
-        file.seek(0)
+        content = await file.read()
+        hash = hashlib.sha256(content).hexdigest()
+        await file.seek(0)
         return hash
 
-    async def _validate(self, file: Annotated[UploadFile, File()]) -> None:
+    async def _validate(self, file: Annotated[UploadFile, File()]) -> str:
         logger.info("Валидация файла")
         if file.size == 0:
             logger.warning("Получент пустой файл")
@@ -45,10 +46,10 @@ class DocumentService:
             logger.warning("Превышен максимальный размер файла")
             raise DomainError(ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED)
 
-        file_hash = self._get_file_hash(file)
+        file_hash = await self._get_file_hash(file)
         if await self.repository.get_file_hash_exists(file_hash=file_hash):
             logger.warning("Файл уже обрабатывался")
-            raise DomainError(ErrorText.FILE_ALREDY_EXSISTS)
+            raise DomainError(ErrorText.FILE_ALREADY_EXISTS)
         logger.info("Валидация файла успешна")
         return file_hash
 

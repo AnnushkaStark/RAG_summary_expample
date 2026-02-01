@@ -36,7 +36,7 @@ def upgrade() -> None:
             sa.Computed(
                 "to_tsvector('russian', full_summary)", persisted=True
             ),
-            nullable=False,
+            nullable=True,
         ),
         sa.Column("summary_embedding", Vector(384), nullable=True),
         sa.Column(
@@ -61,7 +61,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_doc_chunks_embedding",
+        "ix_doc_embedding",
         "document",
         ["summary_embedding"],
         unique=False,
@@ -70,7 +70,7 @@ def upgrade() -> None:
         postgresql_ops={"summary_embedding": "vector_cosine_ops"},
     )
     op.create_index(
-        "ix_doc_chunks_search_vector",
+        "ix_doc_search_vector",
         "document",
         ["full_text_search"],
         unique=False,
@@ -86,7 +86,7 @@ def upgrade() -> None:
             "full_text_search",
             postgresql.TSVECTOR(),
             sa.Computed("to_tsvector('russian', text)", persisted=True),
-            nullable=False,
+            nullable=True,
         ),
         sa.Column("number", sa.Integer(), nullable=False),
         sa.Column("summary_embedding", Vector(384), nullable=True),

@@ -34,12 +34,12 @@ class Document(Base):
     __tablename__ = "document"
     __table_args__ = (
         Index(
-            "ix_doc_chunks_search_vector",
+            "ix_doc_search_vector",
             "full_text_search",
             postgresql_using="gin",
         ),
         Index(
-            "ix_doc_chunks_embedding",
+            "ix_doc_embedding",
             "summary_embedding",
             postgresql_using="hnsw",
             postgresql_with={"m": 16, "ef_construction": 64},
@@ -56,6 +56,7 @@ class Document(Base):
     full_text_search: Mapped[TSVECTOR] = mapped_column(
         TSVECTOR,
         Computed("to_tsvector('russian', full_summary)", persisted=True),
+        nullable=True,
     )
     summary_embedding: Mapped[Vector] = mapped_column(Vector, nullable=True)
     status: Mapped[ENUM] = mapped_column(

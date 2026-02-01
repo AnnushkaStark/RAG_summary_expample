@@ -22,7 +22,7 @@ router = APIRouter()
             ErrorText.ERROR_SAVE_FILE,
             ErrorText.BUCKET_POLICY_ERROR,
             ErrorText.INVALID_FILENAME,
-            ErrorText.FILE_ALREDY_EXSISTS,
+            ErrorText.FILE_ALREADY_EXISTS,
         ],
         e422=[ErrorText.FILE_IS_EMPTY, ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED],
     ),
