@@ -10,7 +10,7 @@ from models import Document
 from repositories.document import DocumentRepository
 from schemas.document import DocumentBase
 from schemas.events import MakeChunk
-from services.producer import ProducerService
+from services.producer import producer
 from services.storage import MinioStorage
 from utils.errors.api_errors import DomainError
 from utils.errors.api_errors import ErrorText
@@ -23,11 +23,9 @@ class DocumentService:
         self,
         repository: DocumentRepository,
         storage: MinioStorage,
-        producer: ProducerService,
     ):
         self.repository = repository
         self.storage = storage
-        self.producer = producer
 
     async def _get_file_hash(self, file: Annotated[UploadFile, File()]) -> str:
         logger.info("Генерация уникального хэша содержимого файла")
@@ -65,9 +63,9 @@ class DocumentService:
                 doc_hash=file_hash,
             )
         )
-        await self.producer.send_message(
+        await producer.send_message(
             message=MakeChunk(file_id=document.id, file_url=document.doc_url),
-            topic=self.producer.chunk_topic,
+            topic=producer.chunk_topic,
         )
         logger.info("Документ сохранен")
         return document.doc_url

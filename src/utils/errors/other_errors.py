@@ -4,3 +4,7 @@ class AppError(Exception):
 
 class StorageError(AppError):
     pass
+
+
+class ChunkerError(AppError):
+    pass

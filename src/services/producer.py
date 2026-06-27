@@ -15,12 +15,14 @@ class ProducerService:
         self.producer = None
         self.chunk_topic = "chunk_topic"
         self.summarize_topic = "summarize_topic"
+        self.full_summarize_topic = "full_summarize_topic"
 
     async def start(self) -> None:
         logger.info("Инициализация продюссера")
         self.producer = AIOKafkaProducer(
             bootstrap_servers=self.bootstrap_url,
             value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+            enable_idempotence=True,
         )
         logger.info("Продюссер запущен")
         await self.producer.start()
@@ -30,10 +32,16 @@ class ProducerService:
         if self.producer:
             logger.info("Продюссер остановлен")
             await self.producer.stop()
+            self.producer = None
 
     async def send_message(self, message: BaseModel, topic: str):
         logger.info(f"Отправка cообщения в топик {topic}")
 
         if not self.producer:
             await self.start()
-        await self.producer.send(topic=topic, value=message.model_dump())
+        await self.producer.send_and_wait(
+            topic=topic, value=message.model_dump()
+        )
+
+
+producer = ProducerService()
