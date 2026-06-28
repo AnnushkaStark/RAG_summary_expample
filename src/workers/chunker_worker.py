@@ -6,10 +6,12 @@ from services.chunk import Chunker
 from services.consumer import ConsumerBase
 from services.splitter import TokenTextSplitter
 from services.storage import MinioStorage
+from services.text_extractor import PDFTextExtractor
 
 
 async def get_documents_chunks() -> None:
     async for session in get_async_session():
+        extrator = PDFTextExtractor()
         chunk_repo = ChunkRepository(session=session)
         storage = MinioStorage()
         splitter = TokenTextSplitter()
@@ -19,6 +21,7 @@ async def get_documents_chunks() -> None:
             splitter=splitter,
             consumer=consumer,
             storage=storage,
+            text_extrator=extrator,
         )
         await chunker.save_schunks()
 

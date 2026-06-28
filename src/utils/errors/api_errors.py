@@ -9,7 +9,7 @@ class Error(BaseModel):
     detail: str
 
 
-class ErrorText(enum.Enum):
+class ErrorCodes(enum.Enum):
     ERROR_SAVE_FILE = "Error save file"
     BUCKET_POLICY_ERROR = "Bucket policy error"
     INVALID_FILENAME = "Invalid filename"
@@ -20,21 +20,21 @@ class ErrorText(enum.Enum):
 
 
 class DomainError(Exception):
-    code: ErrorText
+    code: ErrorCodes
 
-    def __init__(self, code: ErrorText, message: str | None = None):
+    def __init__(self, code: ErrorCodes, message: str | None = None):
         self.code = code
         super().__init__(message)
 
 
 ERROR_STATUS_MAP = {
-    ErrorText.ERROR_SAVE_FILE: 400,
-    ErrorText.BUCKET_POLICY_ERROR: 400,
-    ErrorText.INVALID_FILENAME: 400,
-    ErrorText.FILE_ALREADY_EXISTS: 400,
-    ErrorText.FILE_IS_EMPTY: 422,
-    ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED: 422,
-    ErrorText.ERROR_REMOVE_FILE: 400,
+    ErrorCodes.ERROR_SAVE_FILE: 400,
+    ErrorCodes.BUCKET_POLICY_ERROR: 400,
+    ErrorCodes.INVALID_FILENAME: 400,
+    ErrorCodes.FILE_ALREADY_EXISTS: 400,
+    ErrorCodes.FILE_IS_EMPTY: 422,
+    ErrorCodes.MAXIMUM_FILE_SIZE_EXCEEDED: 422,
+    ErrorCodes.ERROR_REMOVE_FILE: 400,
 }
 
 

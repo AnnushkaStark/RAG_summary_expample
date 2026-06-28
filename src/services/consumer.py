@@ -1,10 +1,7 @@
-import logging
-
 from aiokafka import AIOKafkaConsumer
 
 from config.configs import kafka_settings
-
-logger = logging.getLogger("Consumer")
+from utils.logger import logger
 
 
 class ConsumerBase:

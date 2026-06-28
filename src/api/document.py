@@ -8,7 +8,7 @@ from fastapi import status
 
 from api.dependencies.app_dependency import get_document_service
 from services.document import DocumentService
-from utils.errors.api_errors import ErrorText
+from utils.errors.api_errors import ErrorCodes
 from utils.errors.api_errors import errs
 
 router = APIRouter()
@@ -19,12 +19,12 @@ router = APIRouter()
     status_code=status.HTTP_202_ACCEPTED,
     responses=errs(
         e400=[
-            ErrorText.ERROR_SAVE_FILE,
-            ErrorText.BUCKET_POLICY_ERROR,
-            ErrorText.INVALID_FILENAME,
-            ErrorText.FILE_ALREADY_EXISTS,
+            ErrorCodes.ERROR_SAVE_FILE,
+            ErrorCodes.BUCKET_POLICY_ERROR,
+            ErrorCodes.INVALID_FILENAME,
+            ErrorCodes.FILE_ALREADY_EXISTS,
         ],
-        e422=[ErrorText.FILE_IS_EMPTY, ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED],
+        e422=[ErrorCodes.FILE_IS_EMPTY, ErrorCodes.MAXIMUM_FILE_SIZE_EXCEEDED],
     ),
 )
 async def upload_docs(
@@ -37,7 +37,7 @@ async def upload_docs(
 @router.delete(
     "/",
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=errs(e400=ErrorText.ERROR_REMOVE_FILE),
+    responses=errs(e400=ErrorCodes.ERROR_REMOVE_FILE),
 )
 async def remove_file(
     file_url: str,

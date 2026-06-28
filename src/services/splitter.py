@@ -1,10 +1,7 @@
-import logging
-
 import tiktoken
 
 from utils.errors.other_errors import ChunkerError
-
-logger = logging.getLogger("TextSplitter")
+from utils.logger import logger
 
 
 class TokenTextSplitter:

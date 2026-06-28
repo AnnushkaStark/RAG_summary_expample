@@ -1,12 +1,10 @@
 import json
-import logging
 
 from aiokafka import AIOKafkaProducer
 from pydantic import BaseModel
 
 from config.configs import kafka_settings
-
-logger = logging.getLogger("ProducerService")
+from utils.logger import logger
 
 
 class ProducerService:

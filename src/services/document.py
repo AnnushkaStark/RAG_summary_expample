@@ -1,5 +1,4 @@
 import hashlib
-import logging
 from typing import Annotated
 
 from fastapi import File
@@ -13,9 +12,8 @@ from schemas.events import MakeChunk
 from services.producer import producer
 from services.storage import MinioStorage
 from utils.errors.api_errors import DomainError
-from utils.errors.api_errors import ErrorText
-
-logger = logging.getLogger("DocumentService")
+from utils.errors.api_errors import ErrorCodes
+from utils.logger import logger
 
 
 class DocumentService:
@@ -38,16 +36,16 @@ class DocumentService:
         logger.info("Валидация файла")
         if file.size == 0:
             logger.warning("Получент пустой файл")
-            raise DomainError(ErrorText.FILE_IS_EMPTY)
+            raise DomainError(ErrorCodes.FILE_IS_EMPTY)
 
         if file.size > file_settings.MAX_SIZE:
             logger.warning("Превышен максимальный размер файла")
-            raise DomainError(ErrorText.MAXIMUM_FILE_SIZE_EXCEEDED)
+            raise DomainError(ErrorCodes.MAXIMUM_FILE_SIZE_EXCEEDED)
 
         file_hash = await self._get_file_hash(file)
         if await self.repository.get_file_hash_exists(file_hash=file_hash):
             logger.warning("Файл уже обрабатывался")
-            raise DomainError(ErrorText.FILE_ALREADY_EXISTS)
+            raise DomainError(ErrorCodes.FILE_ALREADY_EXISTS)
         logger.info("Валидация файла успешна")
         return file_hash
 
@@ -58,7 +56,7 @@ class DocumentService:
             schema=DocumentBase(
                 filename=file.filename,
                 doc_url=await self.storage.upload_file(
-                    bucket="documents", file=file
+                    folder="files", file=file
                 ),
                 doc_hash=file_hash,
             )

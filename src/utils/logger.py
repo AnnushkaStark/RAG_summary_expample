@@ -1,8 +1,15 @@
-import logging
+import sys
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    datefmt="%H:%M:%S",
+from loguru import logger
+
+logger.remove()
+logger.add(
+    sys.stdout,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",  # noqa
+    level="INFO",
+    enqueue=True,
 )
-logger = logging.getLogger("AppLogger")
+
+logger.add(
+    "logs/app.log", rotation="500 MB", retention="10 days", compression="zip"
+)

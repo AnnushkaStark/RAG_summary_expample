@@ -6,9 +6,9 @@ class MakeChunk(BaseModel):
     file_url: str
 
 
-class MakeSummarizeChunk(MakeChunk):
-    pass
-
-
 class MakeSummarizeAll(BaseModel):
     file_id: int
+
+
+class MakeSummarizeChunks(MakeSummarizeAll):
+    pass
