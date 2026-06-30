@@ -11,6 +11,10 @@ dependencies = [
     "alembic-postgresql-enum>=1.8.0",
     "asyncpg>=0.31.0",
     "fastapi>=0.128.0",
+    "httpx[socks]>=0.28.1",
+    "langchain>=1.3.11",
+    "langchain-core>=1.4.8",
+    "langchain-openai>=1.3.3",
     "loguru>=0.7.3",
     "minio>=7.2.20",
     "pgvector>=0.4.2",
@@ -29,6 +33,10 @@ dependencies = [
 line-length = 79
 target-version = "py312"
 extend-include = ["src"]
+exclude = [
+    "src/utils/promt.py",
+    "**/utils/promt.py"  
+]
 
 [tool.ruff.lint]
 select = [
@@ -51,6 +59,7 @@ indent-style = "space"
 
 [tool.ty.src]
 include = ["src"]
+
 
 [tool.ty.terminal]
 error-on-warning = true

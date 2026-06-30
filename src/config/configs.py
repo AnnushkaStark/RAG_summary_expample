@@ -29,6 +29,12 @@ class KafkaSettings(BaseSetting):
     BOOTSTRAP_URL: str = "kafka:29092"
 
 
+class OpenaiSettings(BaseSetting):
+    API_KEY: str
+    PROXY: str
+    
+
+openai_settings = OpenaiSettings()
 kafka_settings = KafkaSettings()
 db_settings = DBSettings()
 minio_settings = MinioSettings()

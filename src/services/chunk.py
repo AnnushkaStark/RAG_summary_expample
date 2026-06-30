@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from constants.doc_status import DocumentStatus
 from repositories.chunk import ChunkRepository
@@ -48,20 +49,29 @@ class Chunker:
             logger.info(f"{text}")
             chunks = self.splitter.split_text(text=text)
             logger.info(f"{chunks}")
+            logger.info("Сохранение чанков документа")
             await self.reposiotry.create_bulk(
                 schemas=self._get_chunks_schemas(
                     chunks=chunks, doc_id=file_id
                 ),
                 commit=False,
             )
+            logger.info("Обновлние статуса документа")
             await self.document_respository.partitial_update(
                 obj_id=file_id,
                 new_value=DocumentStatus.CHUNKED,
                 value_name="status",
                 commit=False,
             )
+            await self.document_respository.partitial_update(
+                obj_id=file_id,
+                new_value=datetime.now(),
+                value_name="updated_at",
+                commit=False,
+            )
             await self.reposiotry.session.commit()
 
+            logger.info("Отпрвка события саммаризация чанков")
             await producer.send_message(
                 message=MakeSummarizeChunks(file_id=file_id),
                 topic=producer.summarize_topic,
@@ -70,6 +80,7 @@ class Chunker:
     def _get_chunks_schemas(
         self, chunks: list[str], doc_id: int
     ) -> list[ChunkBase]:
+        logger.info("Создание схемы чанков")
         return [
             ChunkBase(document_id=doc_id, text=chunk, number=idx)
             for idx, chunk in enumerate(chunks)

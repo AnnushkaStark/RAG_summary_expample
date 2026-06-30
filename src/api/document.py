@@ -1,13 +1,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter
-from fastapi import Depends
 from fastapi import File
 from fastapi import UploadFile
 from fastapi import status
 
-from api.dependencies.app_dependency import get_document_service
-from services.document import DocumentService
+from api.dependencies.app_dependency import DocumentServiceDepends
 from utils.errors.api_errors import ErrorCodes
 from utils.errors.api_errors import errs
 
@@ -29,7 +27,7 @@ router = APIRouter()
 )
 async def upload_docs(
     document: Annotated[UploadFile, File()],
-    service: Annotated[DocumentService, Depends(get_document_service)],
+    service: DocumentServiceDepends,
 ):
     return await service.create(file=document)
 
@@ -39,8 +37,5 @@ async def upload_docs(
     status_code=status.HTTP_204_NO_CONTENT,
     responses=errs(e400=ErrorCodes.ERROR_REMOVE_FILE),
 )
-async def remove_file(
-    file_url: str,
-    service: Annotated[DocumentService, Depends(get_document_service)],
-) -> None:
+async def remove_file(file_url: str, service: DocumentServiceDepends) -> None:
     return await service.remove(file_url)

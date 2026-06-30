@@ -2,6 +2,7 @@ import asyncio
 
 from databases.database import get_async_session
 from repositories.chunk import ChunkRepository
+from repositories.document import DocumentRepository
 from services.chunk import Chunker
 from services.consumer import ConsumerBase
 from services.splitter import TokenTextSplitter
@@ -13,6 +14,7 @@ async def get_documents_chunks() -> None:
     async for session in get_async_session():
         extrator = PDFTextExtractor()
         chunk_repo = ChunkRepository(session=session)
+        document_repo = DocumentRepository(session=session)
         storage = MinioStorage()
         splitter = TokenTextSplitter()
         consumer = ConsumerBase(topic="chunk_topic")
@@ -22,6 +24,7 @@ async def get_documents_chunks() -> None:
             consumer=consumer,
             storage=storage,
             text_extrator=extrator,
+            document_repository=document_repo,
         )
         await chunker.save_schunks()
 

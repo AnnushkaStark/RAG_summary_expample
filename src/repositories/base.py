@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel
 from sqlalchemy import insert
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from databases.database import Base
@@ -23,7 +24,10 @@ class RepositoryBase:
         return result.scalar()
 
     async def get_by_id(self, obj_id) -> Base:
-        return await self.session.get(Base, obj_id)
+        result = await self.session.execute(
+            select(self.model).where(self.model.id == obj_id)
+        )
+        return result.scalar_one_or_none()
 
     async def create_bulk(
         self, schemas: list[BaseModel], commit: bool = True
