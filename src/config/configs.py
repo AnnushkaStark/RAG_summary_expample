@@ -31,8 +31,7 @@ class KafkaSettings(BaseSetting):
 
 class OpenaiSettings(BaseSetting):
     API_KEY: str
-    PROXY: str
-    
+
 
 openai_settings = OpenaiSettings()
 kafka_settings = KafkaSettings()

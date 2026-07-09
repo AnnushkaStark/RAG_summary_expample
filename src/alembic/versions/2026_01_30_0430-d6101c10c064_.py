@@ -57,6 +57,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"),
             nullable=False,
         ),
+        sa.Column("updated_at", sa.DateTime(), nullable=True),
         sa.Column("doc_hash", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )

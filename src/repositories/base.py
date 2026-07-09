@@ -3,6 +3,7 @@ from typing import Any
 from pydantic import BaseModel
 from sqlalchemy import insert
 from sqlalchemy import select
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from databases.database import Base
@@ -17,6 +18,19 @@ class RepositoryBase:
         result = await self.session.execute(
             insert(self.model)
             .values(schema.model_dump())
+            .returning(self.model)
+        )
+        if commit:
+            await self.session.commit()
+        return result.scalar()
+
+    async def update(
+        self, schema: BaseModel, obj_id: int, commit: bool = True
+    ) -> Base:
+        result = await self.session.execute(
+            update(self.model)
+            .values(**schema.model_dump())
+            .where(self.model.id == obj_id)
             .returning(self.model)
         )
         if commit:

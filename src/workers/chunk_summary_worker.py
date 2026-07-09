@@ -3,6 +3,7 @@ import asyncio
 from databases.database import get_async_session
 from repositories.chunk import ChunkRepository
 from repositories.document import DocumentRepository
+from services.ai import OpenAiClient
 from services.consumer import ConsumerBase
 from services.summarizer import SummarizerService
 
@@ -12,10 +13,12 @@ async def get_chunks_summary() -> None:
         chunk_repo = ChunkRepository(session=session)
         document_repo = DocumentRepository(session=session)
         consumer = ConsumerBase(topic="summarize_topic")
+        client = OpenAiClient()
         service = SummarizerService(
             document_repository=document_repo,
             chunk_repository=chunk_repo,
             consumer=consumer,
+            client=client,
         )
         await service.get_chunks_summarize()
 

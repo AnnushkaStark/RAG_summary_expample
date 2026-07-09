@@ -5,6 +5,7 @@ from constants.doc_status import DocumentStatus
 from repositories.chunk import ChunkRepository
 from repositories.document import DocumentRepository
 from schemas.chunk import ChunkBase
+from schemas.document import DocumentUpdate
 from schemas.events import MakeSummarizeChunks
 from services.consumer import ConsumerBase
 from services.producer import producer
@@ -57,20 +58,14 @@ class Chunker:
                 commit=False,
             )
             logger.info("Обновлние статуса документа")
-            await self.document_respository.partitial_update(
-                obj_id=file_id,
-                new_value=DocumentStatus.CHUNKED,
-                value_name="status",
+            await self.document_respository.update(
+                schema=DocumentUpdate(
+                    status=DocumentStatus.CHUNKED, updated_at=datetime.now()
+                ),
                 commit=False,
-            )
-            await self.document_respository.partitial_update(
                 obj_id=file_id,
-                new_value=datetime.now(),
-                value_name="updated_at",
-                commit=False,
             )
-            await self.reposiotry.session.commit()
-
+            await self.document_respository.session.commit()
             logger.info("Отпрвка события саммаризация чанков")
             await producer.send_message(
                 message=MakeSummarizeChunks(file_id=file_id),
