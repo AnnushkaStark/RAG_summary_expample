@@ -14,6 +14,10 @@ class ProducerService:
         self.chunk_topic = "chunk_topic"
         self.summarize_topic = "summarize_topic"
         self.full_summarize_topic = "full_summarize_topic"
+        # оно так то и без кафки жизнеспособно
+        # можно сделать одну фоновую таску и через
+        # clery или taskiq
+        # кафка и EDA тут чисто понт ради факта понта
 
     async def start(self) -> None:
         logger.info("Инициализация продюссера")

@@ -14,3 +14,8 @@ class DocumentBase(BaseModel):
 class DocumentUpdate(BaseModel):
     status: DocumentStatus
     updated_at: datetime
+
+
+class DocumentSummaryUpdate(DocumentUpdate):
+    full_summary: str
+    summary_embedding: list[float]
