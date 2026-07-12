@@ -33,6 +33,11 @@ class OpenaiSettings(BaseSetting):
     API_KEY: str
 
 
+class RedisSettings(BaseSetting):
+    pass
+
+
+redis_settings = RedisSettings()
 openai_settings = OpenaiSettings()
 kafka_settings = KafkaSettings()
 db_settings = DBSettings()

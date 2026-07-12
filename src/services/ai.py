@@ -43,7 +43,7 @@ class OpenAiClient:
                     {"role": "system", "content": self.system_message},
                     {"role": "user", "content": prompt},
                 ],
-                max_tokens=2000,
+                max_tokens=1000,
             )  # в идеале нужен профи аккаунт чтоб мог жрать больше токенов
             logger.info(f"{response}")
             return response.to_json()

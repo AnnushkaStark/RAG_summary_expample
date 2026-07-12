@@ -132,6 +132,23 @@ services:
     networks:
     - app-network
 
+  worker_full_summarizer:
+    build:
+      context: .                          
+      dockerfile: Dockerfile.full_summarizer_worker
+    container_name: rag_full_summarizer
+    environment:
+       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092  
+    env_file:
+      - .env
+    depends_on:
+      - rag_db
+      - kafka
+    restart: always
+    networks:
+    - app-network
+
+
 
 
 

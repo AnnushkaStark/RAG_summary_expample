@@ -34,7 +34,7 @@ class SummarizerService:
         text = ""
         if len(chunks):
             for chunk in chunks:
-                text += chunk.text
+                text += chunk.summary_text
         return text
 
     async def _document_summary(
@@ -119,6 +119,7 @@ class SummarizerService:
                 if doc_schema := await self._document_summary(
                     document=found_document
                 ):
+                    logger.info("Документ обработан")
                     await self.document_repository.update(
                         schema=DocumentSummaryUpdate(
                             status=DocumentStatus.SUCCESS,
@@ -129,6 +130,7 @@ class SummarizerService:
                         obj_id=file_id,
                     )
                 else:
+                    logger.warning("Ошибка обработки документа")
                     await self.document_repository.update(
                         schema=DocumentUpdate(
                             status=DocumentStatus.FAILED,
