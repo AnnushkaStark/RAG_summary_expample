@@ -19,7 +19,7 @@ up_home:
 	docker-compose up --build
 
 down:
-	docker-compose down -v
+	docker-compose down
 
 venv:
 	uv python install 3.13

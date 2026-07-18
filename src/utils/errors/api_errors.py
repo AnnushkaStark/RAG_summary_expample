@@ -17,6 +17,7 @@ class ErrorCodes(enum.Enum):
     MAXIMUM_FILE_SIZE_EXCEEDED = "Maximum file size exceeded"
     FILE_ALREADY_EXISTS = "File alredy exsists"
     ERROR_REMOVE_FILE = "Error remove file"
+    ERROR_EMBEDDING_GENERATION = "Error embedding generateion"
 
 
 class DomainError(Exception):
@@ -35,6 +36,7 @@ ERROR_STATUS_MAP = {
     ErrorCodes.FILE_IS_EMPTY: 422,
     ErrorCodes.MAXIMUM_FILE_SIZE_EXCEEDED: 422,
     ErrorCodes.ERROR_REMOVE_FILE: 400,
+    ErrorCodes.ERROR_EMBEDDING_GENERATION: 400,
 }
 
 

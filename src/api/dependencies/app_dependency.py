@@ -4,8 +4,25 @@ from fastapi import Depends
 
 from api.dependencies.database import Session
 from repositories.document import DocumentRepository
+from services.ai import OpenAiClient
 from services.document import DocumentService
+from services.search import SearchService
+from services.state import State
 from services.storage import MinioStorage
+
+
+def get_ai_client() -> OpenAiClient:
+    return OpenAiClient()
+
+
+AiClientDepends = Annotated[OpenAiClient, Depends(get_ai_client)]
+
+
+def get_state() -> State:
+    return State()
+
+
+StateDepends = Annotated[State, Depends(get_state)]
 
 
 def get_storage() -> MinioStorage:
@@ -39,3 +56,14 @@ def get_document_service(
 DocumentServiceDepends = Annotated[
     DocumentService, Depends(get_document_service)
 ]
+
+
+def get_seacrch_service(
+    repository: DocumentRepositoryDepends,
+    state: StateDepends,
+    client: AiClientDepends,
+) -> SearchService:
+    return SearchService(repository=repository, state=state, client=client)
+
+
+SearchServiceDepends = Annotated[SearchService, Depends(get_seacrch_service)]

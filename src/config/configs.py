@@ -34,7 +34,9 @@ class OpenaiSettings(BaseSetting):
 
 
 class RedisSettings(BaseSetting):
-    pass
+    HOST: str = "redis"
+    PORT: int = 6379
+    REDIS_URL: str = "redis://redis:6379/0"
 
 
 redis_settings = RedisSettings()

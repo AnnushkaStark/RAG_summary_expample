@@ -1,5 +1,7 @@
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
+from redis.asyncio import Redis
 from sqlalchemy import Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -9,6 +11,7 @@ from sqlalchemy.sql.sqltypes import ARRAY
 from sqlalchemy.sql.sqltypes import String
 
 from config.configs import db_settings
+from config.configs import redis_settings
 
 SQLALCHEMY_DATABASE_URL = (
     "postgresql+asyncpg://"
@@ -41,3 +44,9 @@ class Base(DeclarativeBase):
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
+
+
+@asynccontextmanager
+async def get_redis() -> AsyncGenerator[Redis]:
+    redis_client = Redis.from_url(redis_settings.REDIS_URL)
+    yield redis_client

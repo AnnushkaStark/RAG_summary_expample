@@ -6,6 +6,9 @@ from fastapi import UploadFile
 from fastapi import status
 
 from api.dependencies.app_dependency import DocumentServiceDepends
+from api.dependencies.app_dependency import SearchServiceDepends
+from schemas.document import DocumentResponse
+from schemas.pagination import PaginationResponse
 from utils.errors.api_errors import ErrorCodes
 from utils.errors.api_errors import errs
 
@@ -39,3 +42,15 @@ async def upload_docs(
 )
 async def remove_file(file_url: str, service: DocumentServiceDepends) -> None:
     return await service.remove(file_url)
+
+
+@router.get(
+    "/",
+    status_code=status.HTTP_200_OK,
+    response_model=PaginationResponse[DocumentResponse],
+    responses=errs(e400=ErrorCodes.ERROR_EMBEDDING_GENERATION),
+)
+async def seacrh(
+    service: SearchServiceDepends, query: str, limit: int = 20, offset: int = 0
+):
+    return await service.search(query=query, limit=limit, offset=offset)
