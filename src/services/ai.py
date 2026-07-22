@@ -8,6 +8,7 @@ from schemas import RawSummary
 from utils.logger import logger
 from utils.promt import get_chunk_prompt
 from utils.promt import get_final_promt
+import re
 
 
 class OpenAiClient:
@@ -74,6 +75,12 @@ class OpenAiClient:
         )
         embedding = await self._get_embedding(text=text)
         if summary and embedding:
-            return CreateSummary(
-                summary_text=summary, summary_embedding=embedding
+            cleaned_summary = summary.replace("\n", " ").replace("\t", " ").replace('\\"', '"')
+        
+        cleaned_summary = re.sub(r'\s+', ' ', cleaned_summary)
+        
+        cleaned_summary = cleaned_summary.strip()
+            
+        return CreateSummary(
+                summary_text=cleaned_summary, summary_embedding=embedding
             )

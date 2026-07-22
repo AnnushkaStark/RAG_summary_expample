@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Computed
@@ -11,9 +12,13 @@ from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 
 from constants.doc_status import DocumentStatus
 from databases.database import Base
+
+if TYPE_CHECKING:
+    from .chunk import Chunk
 
 
 class Document(Base):
@@ -69,3 +74,5 @@ class Document(Base):
         DateTime(timezone=True), nullable=True
     )
     doc_hash: Mapped[str]
+
+    chunks: Mapped[list["Chunk"]] = relationship()

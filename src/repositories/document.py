@@ -1,9 +1,12 @@
+from operator import itemgetter
+
 from sqlalchemy import delete
 from sqlalchemy import exists
 from sqlalchemy import func
 from sqlalchemy import literal_column
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from models import Chunk
 from models import Document
@@ -36,6 +39,8 @@ class DocumentRepository(RepositoryBase):
         limit: int = 20,
         offset: int = 0,
     ) -> PaginationResponse[DocumentResponse]:
+        # и даже вот такой поиск можно засунть в филльтр 
+        # а не только потсгресс триграммы
         fts_cte = (
             select(
                 Document.id.label("doc_id"),
@@ -68,6 +73,7 @@ class DocumentRepository(RepositoryBase):
                 )
                 .label("parent_vector_rank"),
             )
+            .where(Document.summary_embedding.cosine_distance(embedding) < 0.6)
             .order_by(
                 Document.summary_embedding.cosine_distance(embedding).asc()
             )
@@ -86,6 +92,7 @@ class DocumentRepository(RepositoryBase):
                 )
                 .label("chunk_vector_rank"),
             )
+            .where(Chunk.summary_embedding.cosine_distance(embedding) < 0.6)
             .order_by(Chunk.summary_embedding.cosine_distance(embedding).asc())
             .limit(100)
             .cte("chunk_vector_search")
@@ -101,8 +108,10 @@ class DocumentRepository(RepositoryBase):
             )
         ).label("rrf_score")
 
+        
         final_stmt = (
             select(Document, rrf_formula)
+            .options(selectinload(Document.chunks)) 
             .select_from(
                 fts_cte.join(
                     parent_vector_cte,
@@ -130,7 +139,7 @@ class DocumentRepository(RepositoryBase):
         )
 
         result = await self.session.execute(final_stmt)
-        rows = result.scalars().all()
+        rows = result.mappings().all()  
 
         count_stmt = select(
             func.count(
@@ -144,11 +153,9 @@ class DocumentRepository(RepositoryBase):
             )
         )
         total_count_result = await self.session.execute(count_stmt)
-        total_count = total_count_result.scalar() or 0
-        items = [
-            DocumentResponse.model_validate(doc_row) for doc_row in rows
-        ]
-
-        return PaginationResponse[DocumentResponse](
-            items=items, total=total_count, limit=limit, offset=offset
+        return PaginationResponse.create(
+            items=list(map(itemgetter(f"{self.model.__name__}"), rows)),
+            count=total_count_result.scalar() or 0,
+            limit=limit,
+            offset=offset,
         )
